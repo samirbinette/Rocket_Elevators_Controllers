@@ -1,0 +1,176 @@
+1---------------------------Elevator objects---------------------------------------------------
+DEFINE Elevator
+   SET floor
+   SET requestedFloor = 1 TO 66                                                                 // MY objects
+   SET moveElevator = 1 TO 10
+   SET columnList = A B6 TO B1 WITH RC AND B 2 TO 20 WITH RC AND C 21 TO 40 WITH RC AND D 41 TO 60 WITH RC
+   SET callButtonsList= up or down 
+   SET doorsList = open or close 
+   SET floorRequestButtonsList = 1 TO 66
+   SET userChoice
+   SET  direction 
+
+  
+  ENDDEFINE
+
+-----------------------------------------------------------------------------------------------
+
+-----------------------findBestElevator------------------------------------------------------------------
+SEQUENCE findBestElevator USING  columnList AND requestedFloor AND callButtonsList AND moveElevator AND doorsList
+
+FOR EACH elevator IN Elevator columnList 
+
+
+IF ELSE IN Elevator columnList EQUALS TO the closest requestedFloor AND IN Elevator columnList EQUALS TO IN Elevator callButtonsList THEN
+
+moveElevator TO requestedFloor AND IN Elevator doorsList EQUALS open 
+
+ENDIF
+
+ENDFOR
+
+
+ENDSEQUENCE
+----------------------------------------------------------------------------------------------------
+SEQUENCE requestElevator USING  requestedFloor AND userChoice AND columnList AND callButtonsList AND floorRequestButtonsLis AND findBestElevator 
+
+DISPLAY IN Elevator floorRequestButtonsList THEN
+
+GET IN Elevator userChoice
+
+IF userChoice < -6
+
+PRINT invalid choice
+
+RETURN   requestElevator  
+
+ELSE IF userChoice > 66 
+
+PRINT invalid choice 
+
+RETURN   requestElevator                                                                          //MY FUNCTION TO REQUEST THE ELEVATOR 
+
+
+ELSE 
+
+IF userChoice < requestedFloor
+
+IN Elavator callButtonsList EQUALS up THEN
+
+CALL findBestElevator WITH setting  
+
+ELSE 
+
+IN ElEvator callButtonsList EQUALS down THEN
+
+CALL findBestElevator 
+
+ENDIF
+
+
+
+
+ENDSEQUENCE
+
+---------------------------------------------------------------------------------------------------------------------------------
+------------------------------insideElevator-------------------------------------------------------------------------------------
+SEQUENCE insideElevator USING  doorsList AND userChoice AND  floorRequestButtonsList AND moveElevator
+
+WHEN inside IN Elevator doorsList EQUALS close  THEN 
+
+DISPLAY floorRequestButtonsList THEN
+
+GET userChoice
+
+IF userChoice < -6 
+
+PRINT invalid choice
+
+ELSE IF userChoice > 66                                                                                            //MY FUNCTION WHEN THE PERSON IS INSIDE
+
+PRINT invalid choice
+
+ELSE
+
+
+FOR EACH IN Elevator moveElevator TO IN Elevator userChoice
+
+AND WHEN IN Elevator moveElevator EQUALS IN Elevator userChoice THEN IN Elevator doorsList EQUALS open 
+
+ENDFOR
+
+
+
+ENDIF
+
+THEN IN Elevator doorsList EQUALS close THEN return requestElevator TO NULL
+
+
+
+
+-------------------------------------------------------------------------------------------
+
+----------------------------------Scenario 1-----------------------------------------------
+ SET columnList =B1 EQUALS 20 WITH callButtonsList TO 20 AND B2 EQUALS 3 WITH callButtonsList TO 15 AND B3 EQUALS TO 13 WITH callButtonsList TO RC AND B4 EQUALS 15 WITH callButtonsList TO 2 AND  B5 EQUALS 6  WITH callButtonsList TO rc
+
+GET userChoice 
+
+
+  GET requestElevator WITH setting                                                           //WE GONNA GET THE USERCHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+  RESULT elevator B5 TO floor TO rc
+  CALL insideElevator ADD setting THEN 
+  RESULT elevator B5 TO rc floor TO 20
+
+------------------------------------------------------------------------------------------------
+
+----------------------------------Scenario 2-----------------------------------------------
+ SET columnList =C1 EQUALS rc WITH callButtonsList TO 21 AND C2 EQUALS 23 WITH callButtonsList TO 28 AND C3 EQUALS 33 WITH callButtonsList C4 EQUALS 40 WITH callButtonsList TO 24 AND C5 EQUALS 39 WITH callButtonsList TO RC
+
+GET userChoice 
+
+ GET requestElevator WITH setting                                                           //WE GONNA GET THE USERCHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+  RESULT elevator rc TO rc
+  CALL insideElevator ADD setting THEN 
+  RESULT elevator B5 TO rc floor TO 36
+
+
+------------------------------------------------------------------------------------------------
+----------------------------------Scenario 3-----------------------------------------------
+ SET columnList =D1 EQUALS 58 WITH callButtonsList TO rc AND D2 EQUALS 50 WITH callButtonsList TO 60 AND D3 EQUALS 46 WITH callButtonsList TO 58 AND D4 EQUALS rc WITH callButtonsList TO 54 AND D5 EQUALS 60 WITH callButtonsList TO rc
+
+GET userChoice 
+
+ GET requestElevator WITH setting //function                                                           //WE GONNA GET THE USERCHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+  RESULT elevator D1 TO 54 
+  CALL insideElevator ADD setting //function
+   THEN RESULT elevator 54 TO rc 
+
+
+
+
+------------------------------------------------------------------------------------------------
+
+----------------------------------Scenario 4----------------------------------------------------
+ SET columnList =A1 EQUALS ss4  AND A2 EQUALS RC AND A3 EQUALS SS3 WITH callButtonsList TO SS5 AND A4 EQUALS SS6 WITH callButtonsList TO RC AND A5 EQUALS SS1 WITH callButtonsList TO SS6
+
+GET userChoice 
+
+ GET requestElevator WITH setting //function                                                          //WE GONNA GET THE USERCHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+ THEN RESULT elevator A4 TO SS3 
+ THEN CALL insideElevator ADD setting //function 
+ THEN RESULT elevator SS3 TO rc
+
+
+
+
+
+
+------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+

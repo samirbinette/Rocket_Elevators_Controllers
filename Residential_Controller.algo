@@ -1,0 +1,269 @@
+
+
+
+
+
+
+---------------------------Elevator objects---------------------------------------------------
+DEFINE Elevator
+   SET floor
+   SET requestedFloor EQUALS 1 TO 10                                                                 // MY objects
+   SET moveElevator EQUALS 1 TO 10
+   SET columnList EQUALS A or B
+    SET callButtonsList EQUALS up or down 
+    SET doorsList EQUALS open or close 
+    SET floorRequestButtonsList EQUALS 1 TO 10 
+    SET userChoice
+  
+  ENDDEFINE
+-----------------------------------------------------------------------------------------------
+
+-----------------------findBestElevator------------------------------------------------------------------
+SEQUENCE findBestElevator USING  columnList AND requestedFloor AND  callButtonsList AND moveElevator AND doorsList
+
+FOR EACH elevator IN Elevator columnList 
+
+IF IN Elevator columnList EQUALS TO the closest requestedFloor AND  callButtonsList EQUALS  the closest requestedFloor  THEN
+
+moveElevator TO requestedFloor AND IN Elevator doorsList EQUALS open 
+
+IF ELSE  IN Elevator columnList A EQUALS NULL  THEN                                                                         //MY FUNCTION FOR FIDING THE BEST ELEVATOR
+
+ IN Elevator columnList B moveElevator TO requestedFloor AND IN Elevator doorsList EQUALS open 
+
+ IF ELSE  IN Elevator columnList B EQUALS NULL  THEN
+
+ IN Elevator columnList A moveElevator TO requestedFloor AND IN Elevator doorsList EQUALS open
+
+ENDIF
+
+ENDFOR
+
+
+ENDSEQUENCE
+-----------------------------------------------------------------------------------------------
+
+
+----------------------------RequestElevator----------------------------------------------------
+
+SEQUENCE requestElevator USING   requestedFloor AND userChoice AND columnList AND callButtonsList AND floorRequestButtonsList AND findBestElevator y
+
+DISPLAY IN Elevator floorRequestButtonsList THEN
+
+GET IN Elevator userChoice 
+
+IF userChoice < 0 THEN
+
+PRINT invalid choice
+
+RETURN RequestElevator
+
+ELSE IF userChoice > 10 THEN
+
+PRINT invalid choice   
+
+RETURN RequestElevator
+
+                                                                          //MY FUNCTION TO REQUEST THE ELEVATOR 
+
+ENDIF
+
+IF userChoice < requestedFloor
+
+IN Elavator callButtonsList EQUALS up THEN
+
+CALL findBestElevator WITH setting
+
+ELSE 
+
+IN Elavator callButtonsList EQUALS down THEN
+
+CALL findBestElevator WITH setting
+
+
+
+
+
+ENDSEQUENCE
+--------------------------------------------------------------------------------------------
+
+------------------------------insideElevator------------------------------------------------
+SEQUENCE insideElevator USING  doorsList AND floorRequestButtonsList AND userChoice AND moveElevator 
+
+WHEN inside IN Elevator doorsList EQUALS close  THEN 
+
+DISPLAY floorRequestButtonsList THEN
+
+GET userChoice
+
+IF userChoice < 0 
+
+PRINT invalid choice
+
+RETURN insideElevator
+
+
+ELSE IF userChoice > 10 
+
+PRINT invalid choice
+
+RETURN insideElevator 
+                                                                                           //MY FUNCTION WHEN THE PERSON IS INSIDE
+ELSE
+
+
+FOR EACH IN Elevator moveElevator TO IN Elevator userChoice
+
+AND WHEN IN Elevator moveElevator EQUALS IN Elevator userChoice THEN IN Elevator doorsList EQUALS open 
+
+ENDFOR
+
+
+
+ENDIF
+
+THEN IN Elevator doorsList EQUALS close THEN return requestElevator TO NULL
+
+
+
+
+-------------------------------------------------------------------------------------------
+
+---------------------------Scenario 1-----------------------------------------------------------
+
+SET columnList EQUALS A is 2 AND B is 6
+SET floor EQUALS 3
+SET requestedFloor EQUALS 7
+
+                                                                                                                //WE GONNA GET THE USER CHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+  CALL requestElevator  ADD setting THEN
+  RESULT elevator A to floor 3
+  CALL insideElevator  ADD setting THEN 
+  THEN RESULT elevator A IS 7 floor
+
+
+-----------------------------------------------------------------------------------------------
+
+---------------------------Scenario 2-----------------------------------------------------------
+
+SET columnList EQUALS A is 10 AND B IS 3
+SET floor EQUALS 1
+SET requestedFloor EQUALS 6
+
+CALL requestElevator ADD setting THEN
+RESULT elevator B TO floor 1
+CALL insideElevator  ADD setting THEN
+RESULT elevator B TO floor 6 THEN
+
+THEN 2 minutes later 
+
+SET columnList EQUALS A is NULL AND B IS 7                                                                          //WE GONNA GET THE USER CHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+SET floor EQUALS 3
+SET requestedFloor EQUALS 5
+
+CALL requestElevator ADD setting THEN
+RESULT elevator B TO floor 3
+CALL insideElevator ADD setting THEN
+RESULT elevator B TO floor 5
+
+
+
+
+
+----------------------------------------Scenario 3-----------------------------------------------------
+
+SET columnList EQUALS A is 10 AND B IS NULL
+SET floor EQUALS 3
+SET requestedFloor EQUALS 2
+
+
+CALL requestElevator ADD setting  THEN
+RESULT elevator A GET floor 10 TO floor 3
+CALL insideElevator ADD setting THEN                                                                                             //WE GONNA GET THE USER CHOICE AFTER WITH GONNA USE THE FUNCTION requestElevator WHO HAVE INSIDE THE FUNCTION TO FIND THE BEST ELEVATOR WHEN THE PERSON IS INSIDE CALL insideElevator FUNCTION TO GO WHERE HE WANT
+RESULT elevator B GET floor 3 TO floor 2
+
+THEN 5 minutes later
+
+CALL requestElevator ADD setting THEN
+RESULT elevator B GET floor 6 TO floor 10
+CALL insideElevator ADD setting THEN
+RESULT elevator B GET floor 10 TO floor 3
+
+
+--------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/
+
+
+
+
+
+
+
+
+
+
+   
+
+  
+
+
+
+
+
+  
+  
+
+     
+
+
+    
+
+
+
+
+
+
+
+
+
+
